@@ -17,6 +17,8 @@ llm = LlamaCpp(
     verbose=True,
 )
 
+# Important iMessage db tables and their schema. New tables can be added here, but these would consistute most use cases.
+
 context = """
 
 CREATE TABLE chat (ROWID INTEGER PRIMARY KEY AUTOINCREMENT, guid TEXT UNIQUE NOT NULL, style INTEGER, state INTEGER, account_id TEXT, properties BLOB, chat_identifier TEXT, service_name TEXT, room_name TEXT, account_login TEXT, is_archived INTEGER DEFAULT 0, last_addressed_handle TEXT, display_name TEXT, group_id TEXT, is_filtered INTEGER DEFAULT 0, successful_query INTEGER, engram_id TEXT, server_change_token TEXT, ck_sync_state INTEGER DEFAULT 0, original_group_id TEXT, last_read_message_timestamp INTEGER DEFAULT 0, cloudkit_record_id TEXT, last_addressed_sim_id TEXT, is_blackholed INTEGER DEFAULT 0, syndication_date INTEGER DEFAULT 0, syndication_type INTEGER DEFAULT 0);
@@ -27,6 +29,7 @@ CREATE TABLE message (ROWID INTEGER PRIMARY KEY AUTOINCREMENT, guid TEXT UNIQUE 
 
 """
 
+# Prompt template for SQL query generation
 
 prompt = """
 
@@ -38,8 +41,12 @@ Using the above table schema for iMessage data, determine what tables are needed
 Use only the table names and their respective column names above when building your query and do not make up new tables or columns within existing tables.
 
 Request:
-Generate a SQL query that returns the id of the handle and the count of times the phrase 'banana' is sent, grouped by id. Do not return any other text, just the valid SQL statement:
+{request}
 
 """
 
-llm(prompt.format(context=context))
+# An example request to be made to search the iMessage data. Change this to be what you want to search for.
+
+request = "Generate a SQL query that returns the id of the handle and the count of times the phrase 'banana' is sent, grouped by id. Do not return any other text, just the valid SQL statement:"
+
+llm(prompt.format(context=context, request=request))
